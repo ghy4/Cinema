@@ -3,10 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">">
-    {% block head %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>{% block title %}Cinema{% endblock %}</title>
 </head>
 <body>
-    {% block body %}{% endblock %}
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('movies.movie_listings') }}">Movies</a></li>
+                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+        {% block body %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2025 Cinema Website. All rights reserved.</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            alert({{ message|tojson }});
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </script>
 </body>
 </html>

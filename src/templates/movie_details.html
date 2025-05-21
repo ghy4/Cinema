@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ movie.title }} Details{% endblock %}
+
+{% block content %}
+<div class="movie-details-centered">
+    <img src="{{ movie.poster_url }}" alt="{{ movie.title }} Poster" class="movie-details-poster">
+    <div class="movie-details-info">
+        <h2>{{ movie.title }}</h2>
+        <p><strong>Genre:</strong> {{ movie.genre }}</p>
+        <p><strong>Duration:</strong> {{ movie.duration }} mins</p>
+        <p><strong>Rating:</strong> {{ movie.rating }}</p>
+        <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
+        <form class="pb-15 mb-2 mt-2" action="{{ url_for('bookings.book_tickets', movie_id=movie.id) }}" method="get">
+            <button type="submit" class="dashboard-btn">Book tickets</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

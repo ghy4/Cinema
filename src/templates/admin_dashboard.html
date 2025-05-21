@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="admin-dashboard centered-dashboard">
+    <h1>Admin Dashboard</h1>
+    <div class="dashboard-options">
+        <h2>Manage Movies</h2>
+        <div class="dashboard-actions">
+            <form action="{{ url_for('admin.add_movie') }}" method="get">
+                <button type="submit" class="dashboard-btn">Add New Movie</button>
+            </form>
+            <form action="{{ url_for('admin.manage_movies') }}" method="get">
+                <button type="submit" class="dashboard-btn">Edit Existing Movies</button>
+            </form>
+            <form action="{{ url_for('admin.manage_movies') }}" method="get">
+                <button type="submit" class="dashboard-btn">Delete Movies</button>
+            </form>
+        </div>
+    </div>
+    <div class="dashboard-options">
+        <h2>User Management</h2>
+        <div class="dashboard-actions">
+            <form action="{{ url_for('admin.manage_users') }}" method="get">
+                <button type="submit" class="dashboard-btn">View Users</button>
+            </form>
+        </div>
+    </div>
+    <div class="dashboard-options">
+        <h2>Manage Bookings</h2>
+        <div class="dashboard-actions">
+            <form action="{{ url_for('admin.manage_bookings') }}" method="get">
+                <button type="submit" class="dashboard-btn">View Bookings</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

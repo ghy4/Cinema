@@ -1,27 +1,27 @@
 {% extends 'base.html' %}
 
-{% block head %}
-    <title>Cinema</title>
+{% block title %}
+    Cinema
 {% endblock %}
 
 {% block body %}
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#movies">Movies</a></li>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
+    <main style="max-width: 900px; margin: 40px auto;">
         <section id="movies">
             <h1>Welcome to Our Cinema</h1>
-            <p>Discover the latest movies and enjoy an unforgettable experience.</p>
         </section>
+        <section id="now-showing">
+        <h2>Now Showing</h2>
+        <div class="movie-grid" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 30px; width: 100%;">
+            {% for movie in movies[:3] %}
+                <div class="movie-card" onclick="window.location.href='{{ url_for('movies.movie_details', movie_id=movie.id) }}'" style="cursor:pointer; width: 220px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <img src="{{ movie.poster_url }}" alt="{{ movie.title }} Poster">
+                    <h2>{{ movie.title }}</h2>
+                    <p>Genre: {{ movie.genre }}</p>
+                    <p>Duration: {{ movie.duration }} mins</p>
+                    <p>Rating: {{ movie.rating }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
     </main>
-    <footer>
-        <p>&copy; 2025 Cinema Website. All rights reserved.</p>
-    </footer>
 {% endblock %}

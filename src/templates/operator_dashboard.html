@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Operator Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Operator Dashboard</h1>
+    <div class="reservations">
+        <h2>Current Reservations</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Movie Title</th>
+                    <th>Cinema</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Seats</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.id }}</td>
+                    <td>{{ reservation.movie_title }}</td>
+                    <td>{{ reservation.cinema }}</td>
+                    <td>{{ reservation.date }}</td>
+                    <td>{{ reservation.time }}</td>
+                    <td>{{ reservation.seats }}</td>
+                    <td>{{ reservation.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="actions">
+        <h2>Actions</h2>
+        <button onclick="window.location.href='{{ url_for('operator.modify_bookings') }}'">Modify Bookings</button>
+        <button onclick="window.location.href='{{ url_for('operator.view_reports') }}'">View Reports</button>
+    </div>
+</div>
+{% endblock %}

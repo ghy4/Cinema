@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Client Dashboard{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Client Dashboard</h1>
+    <div class="booking-history">
+        <h2>Your Booking History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Movie Title</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Seats</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.movie_title }}</td>
+                    <td>{{ booking.date }}</td>
+                    <td>{{ booking.time }}</td>
+                    <td>{{ booking.seats }}</td>
+                    <td>{{ booking.status }}</td>
+                    <td>
+                        <a href="{{ url_for('client.modify_booking', booking_id=booking.id) }}">Modify</a>
+                        <a href="{{ url_for('client.cancel_booking', booking_id=booking.id) }}">Cancel</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="digital-tickets">
+        <h2>Your Digital Tickets</h2>
+        <ul>
+            {% for ticket in tickets %}
+            <li>
+                <strong>{{ ticket.movie_title }}</strong> - {{ ticket.date }} at {{ ticket.time }}
+                <a href="{{ url_for('client.view_ticket', ticket_id=ticket.id) }}">View Ticket</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="profile-settings">
+        <h2>Profile Settings</h2>
+        <a href="{{ url_for('client.update_profile') }}">Update Profile</a>
+    </div>
+</div>
+{% endblock %}
