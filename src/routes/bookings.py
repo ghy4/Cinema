@@ -1,15 +1,17 @@
 from flask import Blueprint, request, jsonify, render_template, flash, redirect, url_for
 from flask_login import login_required
+from flask_mail import Mail, Message
 from src.models.booking import Booking
 from src.models.movie import Movie
-from services.payment_service import create_payment_intent
-from services.email_service import send_confirmation_email
 from flask_login import current_user
-from src.extensions import db
+from src.extensions import db, mail
+from services.qr_code_service import generate_qr_code_bytes
+from datetime import datetime
 
 bookings_bp = Blueprint('bookings', __name__)
 
 @bookings_bp.route('/book_tickets/<int:movie_id>', methods=['GET', 'POST'])
+@login_required
 def book_tickets(movie_id):
     movie = Movie.query.get_or_404(movie_id)
     if request.method == 'POST':
@@ -21,11 +23,23 @@ def book_tickets(movie_id):
             booking = Booking(
             user_id=current_user.id,
             movie_id=movie.id,
+            booking_time=datetime.utcnow(),
             seats=seats,
             email=email
             )
             db.session.add(booking)
             db.session.commit()
+            qr_data = f"Booking ID: {booking.id}, Movie: {movie.title}, Seats: {seats}"
+            qr_bytes = generate_qr_code_bytes(qr_data)
+
+            msg = Message(
+                subject='Your Cinema Booking Confirmation',
+                sender='poo.proiect@gmail.com',
+                recipients=[email]
+            )
+            msg.body = f"Thank you for your booking!\n\nMovie: {movie.title}\nSeats: {seats}\nBooking ID: {booking.id}\n\nPlease find your QR code attached."
+            msg.attach('ticket_qr.png', 'image/png', qr_bytes)
+            mail.send(msg)
             return redirect(url_for('index'))
         else:
             flash('Payment failed. Please try again.', 'danger')
@@ -40,17 +54,30 @@ def book_ticket():
         cinema_id=data['cinema_id'],
         showtime=data['showtime'],
         seats=data['seats'],
-        total_price=data['total_price']
+        total_price=data['total_price'],
+        email=data['email']
     )
-    
-    if booking.save():
-        payment_success = create_payment_intent(data['payment_info'])
-        if payment_success:
-            send_confirmation_email(booking.user_id, booking.id)
-            return jsonify({'message': 'Booking successful!', 'booking_id': booking.id}), 201
-        else:
-            return jsonify({'message': 'Payment failed. Please try again.'}), 400
-    return jsonify({'message': 'Booking failed. Please check your details.'}), 400
+
+    db.session.add(booking)
+    db.session.commit()
+
+    payment_success = True
+    if payment_success:
+        movie = Movie.query.get(booking.movie_id)
+        qr_data = f"Booking ID: {booking.id}, Movie: {movie.title}, Seats: {booking.seats}"
+        qr_bytes = generate_qr_code_bytes(qr_data)
+        msg = Message(
+            subject='Your Cinema Booking Confirmation',
+            sender='poo.proiect@gmail.com',
+            recipients=[booking.email]
+        )
+        msg.body = f"Thank you for your booking!\n\nMovie: {movie.title}\nSeats: {booking.seats}\nBooking ID: {booking.id}\n\nPlease find your QR code attached."
+        msg.attach('ticket_qr.png', 'image/png', qr_bytes)
+        mail.send(msg)
+
+        return jsonify({'message': 'Booking successful!', 'booking_id': booking.id}), 201
+    else:
+        return jsonify({'message': 'Payment failed. Please try again.'}), 400
 
 @bookings_bp.route('/history/<user_id>', methods=['GET'])
 def booking_history(user_id):

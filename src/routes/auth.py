@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from src.models.user import User
 from src.extensions import db
+from flask_login import login_user
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -12,8 +13,8 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
+            login_user(user) 
             flash('Login successful!', 'success')
-            # Here you should set session or login the user
             return redirect(url_for('index'))
         elif not user:
             flash('No account found with that email.', 'danger')
@@ -30,7 +31,7 @@ def register():
         if User.query.filter_by(email=email).first():
             flash('Email already registered.', 'danger')
         else:
-            user = User(name=name, email=email, password=generate_password_hash(password), is_admin=False)
+            user = User(name=name, email=email, password=generate_password_hash(password), role='Customer')
             db.session.add(user)
             db.session.commit()
             flash('Registration successful! Please log in.', 'success')

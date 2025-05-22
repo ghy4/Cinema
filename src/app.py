@@ -2,9 +2,9 @@ import sys
 from os.path import abspath, dirname
 sys.path.append(abspath(dirname(__file__)))
 from flask import Flask, render_template
-from flask_mail import Mail
+from flask_migrate import Migrate
 from config import Config
-from src.extensions import db
+from src.extensions import db, mail
 from sqlalchemy import text
 from .routes.auth import auth_bp
 from .routes.movies import movies_bp
@@ -21,7 +21,8 @@ from src.models.user import User
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
-
+mail.init_app(app)
+migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -39,7 +40,7 @@ if not app.logger.hasHandlers():
     app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
 
-mail = Mail(app)
+
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(movies_bp)

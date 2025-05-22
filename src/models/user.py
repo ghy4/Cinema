@@ -18,6 +18,10 @@ class Person(ABC):
     def get_role(self) -> str:
         pass
 
+    @abstractmethod
+    def get_discount(self) -> str:
+        pass
+
     def __str__(self):
         return f"{self.first_namename} {self.last_name}, {self.age} years old"
     
@@ -34,6 +38,9 @@ class Customer(Person):
     def get_role(self) -> str:
         return "Customer"
     
+    def get_discount(self):
+        return 5
+    
 class Employee(Person):
     def __init__(self, first_name: str, last_name: str, age:int, employee_id: int):
         super().__init__(first_name, last_name, age)
@@ -41,6 +48,9 @@ class Employee(Person):
 
     def get_role(self) -> str:
         return "Employee"
+    
+    def get_discount(self):
+        return 15
     
 class Manager(Employee):
     def __init__(self, first_name: str, last_name: str, age:int, employee_id: int, department: str):
@@ -52,6 +62,9 @@ class Manager(Employee):
     def __str__(self):
         return f"{self.first_name} {self.last_name}, Manager of {self.department}"
     
+    def get_discount(self):
+        return 25
+    
 
 class User(Base):
     __tablename__ = 'users'
@@ -60,6 +73,24 @@ class User(Base):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False)
+    role = db.Column(db.String(20), nullable=False, default='Customer')
     def __repr__(self):
         return f'<User {self.name}>'
+    
+    def has_role(self, *roles):
+        return self.role in roles
+    
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return str(self.id)

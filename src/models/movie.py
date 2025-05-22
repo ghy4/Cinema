@@ -7,6 +7,8 @@ class Movie(Base):
     title = db.Column(db.String, nullable=False)
     genre = db.Column(db.String)
     duration = db.Column(db.Integer)
+    poster_url = db.Column(db.String)
+    release_date = db.Column(db.Date, nullable=True)
     cinema_id = db.Column(db.Integer, db.ForeignKey('cinemas.id'))
     cinema = db.relationship('Cinema', back_populates='movies')
 

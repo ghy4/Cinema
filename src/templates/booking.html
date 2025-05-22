@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Book Tickets{% endblock %}
 {% block content %}
-    <h2>Book Tickets for {{ movie.title }}</h2>
+    <h2 class="center">Book Tickets for {{ movie.title }}</h2>
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 {% for category, message in messages %}
@@ -9,7 +9,7 @@
 {% endfor %}
 {% endif %}
 {% endwith %}
-<form method="post" id="booking-form">
+<form method="post" id="booking-form" action="{{ url_for('bookings.book_tickets', movie_id=movie.id) }}">
     <label for="seats">Number of Seats:</label>
     <input type="number" id="seats" name="seats" min="1" max="10" required>
     <label for="email">Your Email:</label>

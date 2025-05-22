@@ -10,45 +10,33 @@
         <table>
             <thead>
                 <tr>
-                    <th>Movie Title</th>
-                    <th>Date</th>
-                    <th>Time</th>
+                    <th>Movie</th>
+                    <th>Booking Time</th>
                     <th>Seats</th>
-                    <th>Status</th>
+                    <th>Email</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for booking in bookings %}
                 <tr>
-                    <td>{{ booking.movie_title }}</td>
-                    <td>{{ booking.date }}</td>
-                    <td>{{ booking.time }}</td>
-                    <td>{{ booking.seats }}</td>
-                    <td>{{ booking.status }}</td>
-                    <td>
-                        <a href="{{ url_for('client.modify_booking', booking_id=booking.id) }}">Modify</a>
-                        <a href="{{ url_for('client.cancel_booking', booking_id=booking.id) }}">Cancel</a>
+                    <td class="table-cell">
+                        {{ booking.movie.title if booking.movie else booking.movie_id }}
+                    </td>
+                    <td class="table-cell">{{ booking.booking_time }}</td>
+                    <td class="table-cell">{{ booking.seats }}</td>
+                    <td class="table-cell">{{ booking.email }}</td>
+                    <td class="table-cell">
+                        <a href="{{ url_for('client.view_booking', booking_id=booking.id) }}" class="btn btn-view">View</a>
+                        <a href="{{ url_for('client.edit_booking', booking_id=booking.id) }}" class="btn btn-modify">Edit</a>
+                        <form action="{{ url_for('client.cancel_booking', booking_id=booking.id) }}" method="post" class="btn">
+                            <button type="submit" class="btn btn-cancel" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-    <div class="digital-tickets">
-        <h2>Your Digital Tickets</h2>
-        <ul>
-            {% for ticket in tickets %}
-            <li>
-                <strong>{{ ticket.movie_title }}</strong> - {{ ticket.date }} at {{ ticket.time }}
-                <a href="{{ url_for('client.view_ticket', ticket_id=ticket.id) }}">View Ticket</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="profile-settings">
-        <h2>Profile Settings</h2>
-        <a href="{{ url_for('client.update_profile') }}">Update Profile</a>
     </div>
 </div>
 {% endblock %}
