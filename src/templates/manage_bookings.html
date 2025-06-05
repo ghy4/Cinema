@@ -1,27 +1,31 @@
 {% extends 'base.html' %}
 {% block title %}Manage Bookings{% endblock %}
 {% block content %}
-<h2>Manage Bookings</h2>
-<table>
-    <thead>
-        <tr>
-            <th class="table-header">ID</th>
-            <th class="table-header">User email</th>
-            <th class="table-header">Movie title</th>
-            <th class="table-header">Seats</th>
-            <th class="table-header">Booking Time</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for booking in bookings %}
-        <tr>
-            <td class="table-cell">{{ booking.id }}</td>
-            <td class="table-cell">{{ booking.user.email }}</td>
-            <td class="table-cell">{{ booking.movie.title }}</td>
-            <td class="table-cell">{{ booking.seats }}</td>
-            <td class="table-cell">{{ booking.booking_time }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<diV class="booking-history">
+    <h2>Manage Bookings</h2>
+    <table>
+        <thead>
+            <tr>
+                <th class="table-header">ID</th>
+                <th class="table-header">User email</th>
+                <th class="table-header">Movie title</th>
+                <th class="table-header">Seats</th>
+                <th class="table-header">Booking Time</th>
+                <th class="table-header">Reservation Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td class="table-cell">{{ booking.id }}</td>
+                <td class="table-cell">{{ booking.user.email }}</td>
+                <td class="table-cell">{{ booking.movie.title }}</td>
+                <td class="table-cell">{{ booking.seats }}</td>
+                <td class="table-cell">{{ booking.booking_time }}</td>
+                <td class="table-cell">{{ booking.showtime.strftime('%Y-%m-%d %H:%M') if booking.showtime else '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</diV>
 {% endblock %}

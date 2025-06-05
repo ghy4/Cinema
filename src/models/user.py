@@ -54,7 +54,7 @@ class Employee(Person):
     
 class Manager(Employee):
     def __init__(self, first_name: str, last_name: str, age:int, employee_id: int, department: str):
-        super().__init__(first_name, last_name, age)
+        super().__init__(first_name, last_name, age, employee_id)
         self.department = department
 
     def get_role(self) -> str:
@@ -74,6 +74,14 @@ class User(Base):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='Customer')
+
+    def __init__(self, id: int, name: str, email: str, password: str, role: str = 'Customer'):
+        self.id = id
+        self.name = name
+        self.email = email
+        self.password = password
+        self.role = role
+
     def __repr__(self):
         return f'<User {self.name}>'
     

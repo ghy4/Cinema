@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Book Tickets{% endblock %}
 {% block content %}
-    <h2 class="center">Book Tickets for {{ movie.title }}</h2>
+    <h2 class="text-center">Book Tickets for {{ movie.title }}</h2>
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 {% for category, message in messages %}
@@ -9,13 +9,36 @@
 {% endfor %}
 {% endif %}
 {% endwith %}
+<div class="text-center">
+    <p>Base Price per Ticket: <strong>{{ base_price }} RON</strong></p>
+    <p>Your Discount: <strong>{{ discount_percent }}%</strong></p>
+    <p>Final Price per Ticket: <strong>{{ discounted_price|round(2) }} RON</strong></p>
+</div>
 <form method="post" id="booking-form" action="{{ url_for('bookings.book_tickets', movie_id=movie.id) }}">
     <label for="seats">Number of Seats:</label>
     <input type="number" id="seats" name="seats" min="1" max="10" required>
+    <label for="showtime">Date and Time of Visit:</label>
+    <input type="datetime-local" id="showtime" name="showtime" required>
     <label for="email">Your Email:</label>
     <input type="email" id="email" name="email" required>
     <label for="card">Card Number (demo):</label>
     <input type="text" id="card" name="card" placeholder="1234 5678 9012 3456" required>
     <button type="submit">Pay & Book</button>
 </form>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var releaseDate = "{{ movie.release_date.isoformat() if movie.release_date else '' }}";
+        if (releaseDate) {
+            let minDate = releaseDate.length > 10 ? releaseDate.substring(0, 16) : releaseDate + 'T00:00';
+            document.getElementById('showtime').setAttribute('min', minDate);
+        }
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            var showtime = document.getElementById('showtime').value;
+            if (releaseDate && showtime < minDate) {
+                alert('You cannot book tickets before the movie release date!');
+                e.preventDefault();
+            }
+        });
+    });
+</script>
 {% endblock %}

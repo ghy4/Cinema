@@ -3,7 +3,7 @@
 {% block title %}Operator Dashboard{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container booking-history">
     <h1>Operator Dashboard</h1>
     <div class="reservations">
         <h2>Current Reservations</h2>
@@ -14,6 +14,7 @@
                     <th>User ID</th>
                     <th>Movie</th>
                     <th>Booking Time</th>
+                    <th>Reservation Time</th>
                     <th>Seats</th>
                     <th>Email</th>
                     <th>Actions</th>
@@ -28,11 +29,10 @@
                         {{ booking.movie.title if booking.movie else booking.movie_id }}
                     </td>
                     <td class="table-cell">{{ booking.booking_time }}</td>
+                    <td class="table-cell">{{ booking.showtime.strftime('%Y-%m-%d %H:%M') if booking.showtime else '' }}</td>
                     <td class="table-cell">{{ booking.seats }}</td>
                     <td class="table-cell">{{ booking.email }}</td>
                     <td class="table-cell">
-                        <a href="{{ url_for('operator.view_booking', booking_id=booking.id) }}" class="btn btn-view">View</a>
-                        <a href="{{ url_for('operator.edit_booking', booking_id=booking.id) }}" class="btn btn-modify">Edit</a>
                         <form action="{{ url_for('operator.cancel_booking', booking_id=booking.id) }}" method="post" class="btn">
                             <button type="submit" class="btn btn-cancel" onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</button>
                         </form>

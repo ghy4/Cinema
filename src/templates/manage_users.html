@@ -1,32 +1,34 @@
 {% extends 'base.html' %}
 {% block title %}Manage Users{% endblock %}
 {% block content %}
-<h2>Manage Users</h2>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Admin</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td colspan="5" style="height: 16px;"></td></tr>
-        {% for user in users %}
-        <tr class="movie-row">
-            <td class="p-12-10">{{ user.id }}</td>
-            <td class="p-12-10">{{ user.name }}</td>
-            <td class="p-12-10">{{ user.email }}</td>
-            <td class="p-12-10">{{ user.role}}</td>
-            <td class="p-12-10">
-                <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="post" style="display:inline;">
-                    <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="booking-history">
+    <h2>Manage Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Admin</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="5" style="height: 16px;"></td></tr>
+            {% for user in users %}
+            <tr class="movie-row">
+                <td class="p-12-10">{{ user.id }}</td>
+                <td class="p-12-10">{{ user.name }}</td>
+                <td class="p-12-10">{{ user.email }}</td>
+                <td class="p-12-10">{{ user.role}}</td>
+                <td class="p-12-10">
+                    <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="post" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

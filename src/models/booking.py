@@ -11,6 +11,7 @@ class Booking(Base):
     booking_time = db.Column(db.DateTime, nullable=False)
     seats = db.Column(db.Integer, nullable=False) 
     email = db.Column(db.String(120), nullable=False)
+    showtime = db.Column(db.DateTime, nullable=False) 
 
     user = db.relationship('User', backref='bookings')
     movie = db.relationship('Movie', backref='bookings')

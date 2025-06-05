@@ -7,6 +7,7 @@ from flask_login import current_user
 from src.extensions import db, mail
 from services.qr_code_service import generate_qr_code_bytes
 from datetime import datetime
+from src.utils.convertors import user_to_person
 
 bookings_bp = Blueprint('bookings', __name__)
 
@@ -14,22 +15,33 @@ bookings_bp = Blueprint('bookings', __name__)
 @login_required
 def book_tickets(movie_id):
     movie = Movie.query.get_or_404(movie_id)
+    base_price = 50  # Set your base ticket price here
+    person = user_to_person(current_user)
+    discount_percent = person.get_discount() if person else 0
+    discounted_price = base_price * (1 - discount_percent / 100)
     if request.method == 'POST':
-        seats = request.form.get('seats')
+        seats = int(request.form.get('seats'))
         email = request.form.get('email')
+        showtime_str = request.form.get('showtime')
+        from datetime import datetime
+        showtime = datetime.strptime(showtime_str, '%Y-%m-%dT%H:%M')
+        if movie.release_date and showtime.date() < movie.release_date:
+            flash('You cannot book tickets before the movie release date!', 'danger')
+            return render_template('booking.html', movie=movie, base_price=base_price, discount_percent=discount_percent, discounted_price=discounted_price)
         payment_success = True
         if payment_success:
             flash('Payment successful! Your tickets are booked.', 'success')
             booking = Booking(
-            user_id=current_user.id,
-            movie_id=movie.id,
-            booking_time=datetime.utcnow(),
-            seats=seats,
-            email=email
+                user_id=current_user.id,
+                movie_id=movie.id,
+                booking_time=datetime.utcnow(),
+                seats=seats,
+                email=email,
+                showtime=showtime
             )
             db.session.add(booking)
             db.session.commit()
-            qr_data = f"Booking ID: {booking.id}, Movie: {movie.title}, Seats: {seats}"
+            qr_data = f"Booking ID: {booking.id}, Movie: {movie.title}, Seats: {seats}, Showtime: {showtime.strftime('%Y-%m-%d %H:%M')}"
             qr_bytes = generate_qr_code_bytes(qr_data)
 
             msg = Message(
@@ -37,13 +49,13 @@ def book_tickets(movie_id):
                 sender='poo.proiect@gmail.com',
                 recipients=[email]
             )
-            msg.body = f"Thank you for your booking!\n\nMovie: {movie.title}\nSeats: {seats}\nBooking ID: {booking.id}\n\nPlease find your QR code attached."
+            msg.body = f"Thank you for your booking!\n\nMovie: {movie.title}\nSeats: {seats}\nShowtime: {showtime.strftime('%Y-%m-%d %H:%M')}\nBooking ID: {booking.id}\n\nPlease find your QR code attached."
             msg.attach('ticket_qr.png', 'image/png', qr_bytes)
             mail.send(msg)
             return redirect(url_for('index'))
         else:
             flash('Payment failed. Please try again.', 'danger')
-    return render_template('booking.html', movie=movie)
+    return render_template('booking.html', movie=movie, base_price=base_price, discount_percent=discount_percent, discounted_price=discounted_price)
 
 @bookings_bp.route('/book', methods=['POST'])
 def book_ticket():

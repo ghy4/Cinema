@@ -14,3 +14,7 @@ class Movie(Base):
 
     def __repr__(self):
         return f'<Movie {self.title}>'
+    
+    @classmethod
+    def get_all_movies(cls):
+        return cls.query.all()
